@@ -1,6 +1,7 @@
 package com.scottsapps.scotuswatch
 
 import android.Manifest
+import android.annotation.SuppressLint
 import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
@@ -27,6 +28,8 @@ import com.scottsapps.scotuswatch.ui.theme.SCOTUSWatchTheme
 
 class MainActivity : ComponentActivity() {
 
+    // Lint incorrectly flags this on ComponentActivity — suppressed (false positive).
+    @SuppressLint("InvalidFragmentVersionForActivityResult")
     private val requestPermissionLauncher = registerForActivityResult(
         ActivityResultContracts.RequestPermission()
     ) { granted ->
