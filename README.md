@@ -15,10 +15,8 @@ Get instant push notifications when the U.S. Supreme Court publishes new documen
 This app is a notification client only. It does **not** include:
 
 - A document browser or archive
-- AI summaries or vote breakdowns (those are iOS-only for now)
+- AI summaries or vote breakdowns (those are available on iOS (coming soon), Windows, and Bluesky)
 - Settings or preferences
-
-If you tap a notification and want to read the summary, the companion iOS/iPadOS app has the full experience.
 
 ---
 
@@ -63,5 +61,6 @@ The app registers an anonymous device token with the SCOTUSWatch backend so it c
 
 ## Related
 
-- **iOS/iPadOS app** — available on the App Store (search "SCOTUSWatch")
-- **Windows app** — [scottsapps/SCOTUSWatchWindows](https://github.com/scottsapps/SCOTUSWatchWindows)
+- **iOS/iPadOS app** — not yet available on the App Store
+- **Windows app** — [Microsoft Store](https://apps.microsoft.com/detail/9n2nmt00tqbw?hl=en-us&gl=US&ocid=pdpshare)
+- **BlueSky** - [Follow Me](https://bsky.app/profile/scotuswatch.bsky.social)
