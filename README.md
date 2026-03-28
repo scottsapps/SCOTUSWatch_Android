@@ -15,7 +15,7 @@ Get instant push notifications when the U.S. Supreme Court publishes new documen
 This app is a notification client only. It does **not** include:
 
 - A document browser or archive
-- AI summaries or vote breakdowns (those are available on iOS (coming soon), Windows, and Bluesky)
+- AI summaries or vote breakdowns (those are available on iOS (coming soon), Windows, and Bluesky
 - Settings or preferences
 
 ---
