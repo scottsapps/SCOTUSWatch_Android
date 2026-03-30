@@ -7,7 +7,7 @@ Get instant push notifications when the U.S. Supreme Court publishes new documen
 ## What It Does
 
 - **Notifies you immediately** when a new Supreme Court document is detected, usually within seconds of it appearing on supremecourt.gov
-- **Opens the document** directly in your browser when you tap the notification
+- **Downloads the document** when you tap the notification
 - **Works in the background** — no need to keep the app open
 
 ## What It Does Not Do
@@ -49,7 +49,7 @@ Tap **Install** when prompted, then **Open**. The app will ask for notification 
 
 ## Getting Updates
 
-Updates are not automatic. When a new version is available, download the new APK from the [Releases page](https://github.com/scottsapps/SCOTUSWatch_Android/releases) and install it over the existing app — your settings are preserved.
+Updates are not automatic. When a new version is available, you'll receive an on-device notification. You can then download the new APK from the [Releases page](https://github.com/scottsapps/SCOTUSWatch_Android/releases) and install it over the existing app — your settings are preserved.
 
 ---
 
