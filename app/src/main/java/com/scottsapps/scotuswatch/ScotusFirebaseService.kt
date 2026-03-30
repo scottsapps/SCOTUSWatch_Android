@@ -79,9 +79,13 @@ class ScotusFirebaseService : FirebaseMessagingService() {
         }
         manager.createNotificationChannel(channel)
 
-        // Tapping the notification opens the document URL in the browser
+        // Tapping the notification opens the document URL in the browser.
+        // CATEGORY_BROWSABLE restricts Android's intent resolver to web browsers
+        // only, preventing the URL from routing to a download manager or PDF viewer.
         val intent = if (url != null) {
-            Intent(Intent.ACTION_VIEW, Uri.parse(url))
+            Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
+                addCategory(Intent.CATEGORY_BROWSABLE)
+            }
         } else {
             packageManager.getLaunchIntentForPackage(packageName)
         }
