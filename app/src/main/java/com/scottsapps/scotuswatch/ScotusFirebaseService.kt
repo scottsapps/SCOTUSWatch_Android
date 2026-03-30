@@ -15,6 +15,7 @@ class ScotusFirebaseService : FirebaseMessagingService() {
     companion object {
         private const val TAG = "ScotusFirebase"
         const val CHANNEL_ID = "scotus_alerts"
+        const val CHANNEL_ID_SILENT = "scotus_alerts_silent"
 
         /**
          * Register an FCM token with the Lambda backend.
@@ -63,29 +64,42 @@ class ScotusFirebaseService : FirebaseMessagingService() {
             ?: return
 
         val documentUrl = message.data["fileURL"]
-        showNotification(alertBody, documentUrl)
+        val docTypeKey  = message.data["docTypeKey"]
+        val silent = docTypeKey != null &&
+                !NotificationPreferences.isEnabled(this, docTypeKey)
+        showNotification(alertBody, documentUrl, silent)
     }
 
-    private fun showNotification(body: String, url: String?) {
+    private fun showNotification(body: String, url: String?, silent: Boolean = false) {
         val manager = getSystemService(NOTIFICATION_SERVICE) as NotificationManager
 
-        // Create notification channel (required on Android 8+, no-op if already exists)
-        val channel = NotificationChannel(
-            CHANNEL_ID,
-            "SCOTUS Document Alerts",
-            NotificationManager.IMPORTANCE_HIGH
-        ).apply {
-            description = "Alerts when new Supreme Court documents are posted"
-        }
-        manager.createNotificationChannel(channel)
-
-        // Tapping the notification opens the document URL in the browser.
-        // CATEGORY_BROWSABLE restricts Android's intent resolver to web browsers
-        // only, preventing the URL from routing to a download manager or PDF viewer.
-        val intent = if (url != null) {
-            Intent(Intent.ACTION_VIEW, Uri.parse(url)).apply {
-                addCategory(Intent.CATEGORY_BROWSABLE)
+        // High-priority channel for enabled document types
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID,
+                "SCOTUS Document Alerts",
+                NotificationManager.IMPORTANCE_HIGH
+            ).apply {
+                description = "Alerts when new Supreme Court documents are posted"
             }
+        )
+
+        // Low-priority channel for document types the user has muted in Settings
+        manager.createNotificationChannel(
+            NotificationChannel(
+                CHANNEL_ID_SILENT,
+                "SCOTUS Alerts (Silent)",
+                NotificationManager.IMPORTANCE_LOW
+            ).apply {
+                description = "Silent alerts for document types muted in Settings"
+                setSound(null, null)
+                enableVibration(false)
+            }
+        )
+
+        // Tapping the notification opens the document URL in the browser
+        val intent = if (url != null) {
+            Intent(Intent.ACTION_VIEW, Uri.parse(url))
         } else {
             packageManager.getLaunchIntentForPackage(packageName)
         }
@@ -95,14 +109,19 @@ class ScotusFirebaseService : FirebaseMessagingService() {
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
 
-        val notification = NotificationCompat.Builder(this, CHANNEL_ID)
+        val channelId = if (silent) CHANNEL_ID_SILENT else CHANNEL_ID
+        val priority  = if (silent) NotificationCompat.PRIORITY_LOW
+                        else        NotificationCompat.PRIORITY_HIGH
+
+        val notification = NotificationCompat.Builder(this, channelId)
             .setSmallIcon(R.drawable.ic_notification)
             .setContentTitle("SCOTUSWatch")
             .setContentText(body)
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setContentIntent(pendingIntent)
             .setAutoCancel(true)
-            .setPriority(NotificationCompat.PRIORITY_HIGH)
+            .setPriority(priority)
+            .apply { if (silent) setSilent(true) }
             .build()
 
         // Use body hashCode so multiple notifications don't overwrite each other

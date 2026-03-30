@@ -2,7 +2,9 @@ package com.scottsapps.scotuswatch
 
 import android.Manifest
 import android.annotation.SuppressLint
+import android.content.Intent
 import android.content.pm.PackageManager
+import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.util.Log
@@ -15,9 +17,19 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Settings
+import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.TopAppBar
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +39,9 @@ import com.google.firebase.messaging.FirebaseMessaging
 import com.scottsapps.scotuswatch.ui.theme.SCOTUSWatchTheme
 
 class MainActivity : ComponentActivity() {
+
+    private var updateUrl    by mutableStateOf<String?>(null)
+    private var showSettings by mutableStateOf(false)
 
     // Lint incorrectly flags this on ComponentActivity — suppressed (false positive).
     @SuppressLint("InvalidFragmentVersionForActivityResult")
@@ -57,31 +72,82 @@ class MainActivity : ComponentActivity() {
             ScotusFirebaseService.registerTokenWithBackend(token)
         }
 
+        // Check for app updates in the background; show banner if a newer version exists.
+        UpdateChecker.check(this) { url ->
+            runOnUiThread { updateUrl = url }
+        }
+
         setContent {
             SCOTUSWatchTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxSize()
-                            .padding(32.dp),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        Text(
-                            text = "SCOTUSWatch",
-                            style = MaterialTheme.typography.headlineLarge
-                        )
-                        Spacer(modifier = Modifier.height(16.dp))
-                        Text(
-                            text = "You'll receive notifications when new Supreme Court documents are posted.\n\nTap a notification to read the document.",
-                            style = MaterialTheme.typography.bodyLarge,
-                            textAlign = TextAlign.Center
+                    if (showSettings) {
+                        SettingsScreen(onBack = { showSettings = false })
+                    } else {
+                        MainScreen(
+                            updateUrl = updateUrl,
+                            onUpdateDownload = {
+                                startActivity(Intent(Intent.ACTION_VIEW, Uri.parse(it)))
+                            },
+                            onUpdateDismiss = { updateUrl = null },
+                            onOpenSettings = { showSettings = true },
                         )
                     }
                 }
+            }
+        }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+private fun MainScreen(
+    updateUrl: String?,
+    onUpdateDownload: (String) -> Unit,
+    onUpdateDismiss: () -> Unit,
+    onOpenSettings: () -> Unit,
+) {
+    Scaffold(
+        topBar = {
+            TopAppBar(
+                title = { Text("SCOTUSWatch") },
+                actions = {
+                    IconButton(onClick = onOpenSettings) {
+                        Icon(
+                            imageVector = Icons.Default.Settings,
+                            contentDescription = "Notification Settings"
+                        )
+                    }
+                }
+            )
+        }
+    ) { innerPadding ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+        ) {
+            updateUrl?.let { url ->
+                UpdateBanner(
+                    onDownload = { onUpdateDownload(url) },
+                    onDismiss = onUpdateDismiss,
+                )
+            }
+
+            Column(
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(32.dp),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = "You'll receive notifications when new Supreme Court documents are posted.\n\nTap a notification to read the document.",
+                    style = MaterialTheme.typography.bodyLarge,
+                    textAlign = TextAlign.Center,
+                )
             }
         }
     }
