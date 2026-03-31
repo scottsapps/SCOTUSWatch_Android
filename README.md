@@ -61,6 +61,6 @@ The app registers an anonymous device token with the SCOTUSWatch backend so it c
 
 ## Related
 
-- **iOS/iPadOS app** — not yet available on the App Store
+- **iOS/iPadOS app** — [TestFlight Beta](https://testflight.apple.com/join/nAn3bAwR)
 - **Windows app** — [Microsoft Store](https://apps.microsoft.com/detail/9n2nmt00tqbw?hl=en-us&gl=US&ocid=pdpshare)
 - **BlueSky** - [Follow Me](https://bsky.app/profile/scotuswatch.bsky.social)
