@@ -9,14 +9,11 @@ Get instant push notifications when the U.S. Supreme Court publishes new documen
 - **Notifies you immediately** when a new Supreme Court document is detected, usually within seconds of it appearing on supremecourt.gov
 - **Downloads the document** when you tap the notification
 - **Works in the background** — no need to keep the app open
-
-## What It Does Not Do
-
-This app is a notification client only. It does **not** include:
-
-- A document browser or archive
-- AI summaries or vote breakdowns (those are available on iOS (coming soon), Windows, and Bluesky
-- Settings or preferences
+- **Browse and search the archive** — view past documents organized by type and month
+- **AI summaries** — get concise summaries and vote breakdowns for opinions and order lists
+- **Watched Cases** — track specific cases by docket number and get notified when they appear in new documents
+- **Google Drive sync** — your watched cases list syncs across Android devices via Google Drive
+- **Adaptive layout** — on tablets and large screens, the app uses a two-pane list/detail layout
 
 ---
 
@@ -29,7 +26,9 @@ This app is a notification client only. It does **not** include:
 
 ## Installation
 
-SCOTUSWatch is not on the Google Play Store. You install it directly from the APK file — this is called "sideloading" and takes about 30 seconds.
+SCOTUSWatch is coming to the Google Play Store later in 2026. Until then, you can install it directly from the APK file — this is called "sideloading" and takes about 30 seconds.
+
+> **Note:** The source code for this app is not available in this repository. Once the app is published to the Google Play Store, this GitHub page will be removed.
 
 ### Step 1 — Download the APK
 
